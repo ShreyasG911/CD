@@ -1,0 +1,167 @@
+🔹 Experiment No. 8 (if you have it)
+or tell me your next practical 👍
+Next
+Good 👍 let’s continue.
+________________________________________
+🔹 EXPERIMENT NO. 8
+Intermediate Code Generation (Three Address Code)
+________________________________________
+🎯 1. Objective
+•	To generate Intermediate Code 
+•	To convert high-level expressions into Three Address Code (TAC) 
+•	To understand how compiler simplifies expressions 
+________________________________________
+📘 2. Theory (Simple Explanation)
+🔹 What is Intermediate Code?
+•	It is machine-independent code 
+•	Generated between: 
+o	Source Code → Machine Code 
+________________________________________
+🔹 What is Three Address Code (TAC)?
+•	Each instruction has at most 3 operands 
+👉 Format:
+result = operand1 op operand2
+________________________________________
+✅ Example
+Input Expression:
+a = b + c * d
+Output (TAC):
+t1 = c * d
+t2 = b + t1
+a = t2
+________________________________________
+💻 3. C Program – TAC Generator
+This program generates TAC for simple expressions.
+/* icg.l */
+%{
+#include "y.tab.h"
+#include<string.h>
+%}
+
+%%
+[a-zA-Z][a-zA-Z0-9]*   { strcpy(yylval.str, yytext); return ID; }
+[0-9]+                 { strcpy(yylval.str, yytext); return NUM; }
+[ \t]                  ;
+\n                     return '\n';
+.                      return yytext[0];
+%%
+
+int yywrap()
+{
+    return 1;
+}
+```
+
+
+
+/* icg.y */
+%{
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+int temp = 1;
+
+void yyerror(char *s);
+int yylex();
+
+char* newTemp()
+{
+    static char t[10];
+    sprintf(t, "t%d", temp++);
+    return strdup(t);
+}
+%}
+
+%union{
+    char str[20];
+}
+
+%token <str> ID NUM
+%type  <str> expr
+
+%%
+
+input:
+      stmt '\n'
+      ;
+
+stmt:
+      ID '=' expr
+      {
+          printf("%s = %s\n", $1, $3);
+      }
+      ;
+
+expr:
+      expr '+' expr
+      {
+          char *t = newTemp();
+          printf("%s = %s + %s\n", t, $1, $3);
+          strcpy($$, t);
+      }
+    | expr '*' expr
+      {
+          char *t = newTemp();
+          printf("%s = %s * %s\n", t, $1, $3);
+          strcpy($$, t);
+      }
+    | ID   { strcpy($$, $1); }
+    | NUM  { strcpy($$, $1); }
+    ;
+
+%%
+
+void yyerror(char *s)
+{
+    printf("Invalid Input\n");
+}
+
+int main()
+{
+    printf("Enter Expression:\n");
+    yyparse();
+    return 0;
+}________________________________________
+
+lex icg.l
+yacc -d icg.y
+gcc lex.yy.c y.tab.c -o icg
+./icg
+
+________________________________________
+▶ 4. Sample Execution
+Input:
+a=b+c*d
+Output:
+t1 = c * d
+t2 = b + t1
+a = t2
+_______________________________________
+________________________________________
+🧠 Explanation
+Step	Operation
+1	Find operator
+2	Create temp variable
+3	Replace expression
+4	Continue
+________________________________________
+🎓 Viva Questions
+❓ What is TAC?
+Intermediate representation with max 3 operands.
+❓ Why use TAC?
+•	Easy optimization 
+•	Easy code generation 
+❓ What are temporaries?
+Intermediate variables (t1, t2…)
+❓ Types of intermediate code?
+•	Three address code 
+•	Quadruples 
+•	Triples 
+•	Indirect triples 
+________________________________________
+✅ Conclusion
+In this experiment:
+•	Converted expressions into TAC 
+•	Used temporary variables 
+•	Understood intermediate code generation 
