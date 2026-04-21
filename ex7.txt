@@ -1,0 +1,184 @@
+🔹 EXPERIMENT NO. 7
+Type Checking using YACC
+________________________________________
+🎯 1. Objective
+•	To perform type checking 
+•	To detect type mismatch errors 
+•	Using YACC (Syntax + Semantic analysis) 
+________________________________________
+📘 2. Theory (Simple Explanation)
+🔹 What is Type Checking?
+Type checking ensures that:
+•	Variables are used with correct data types 
+•	Operations are valid 
+________________________________________
+✅ Valid Example
+int a = 10;
+int b = 20;
+a = a + b;
+________________________________________
+❌ Invalid Example
+int a = 10;
+float b = 5.5;
+a = a + b;   // Type mismatch
+________________________________________
+🔹 Types Considered
+•	int 
+•	float 
+________________________________________
+🔹 Concept Used
+•	Symbol table concept 
+•	Store variable and its type 
+•	Compare types during assignment 
+________________________________________
+💻 3. LEX Program (type.l)
+Save as: type.l
+%{
+#include "y.tab.h"
+#include <string.h>
+%}
+
+%%
+"int"      { return INT; }
+"float"    { return FLOAT; }
+
+[a-zA-Z][a-zA-Z0-9]*  { yylval.str = strdup(yytext); return ID; }
+
+[0-9]+      { return NUM; }
+[0-9]+"."[0-9]+  { return FNUM; }
+
+"="         { return '='; }
+";"         { return ';'; }
+
+[ \t\n]     ;
+.           return yytext[0];
+%%
+
+int yywrap() {
+    return 1;
+}
+________________________________________
+💻 4. YACC Program (type.y)
+Save as: type.y
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void yyerror(const char *s);
+int yylex();
+
+// Simple symbol table
+char var[10][10];
+char type[10][10];
+int count = 0;
+
+char* getType(char *v) {
+    for(int i = 0; i < count; i++) {
+        if(strcmp(var[i], v) == 0)
+            return type[i];
+    }
+    return "undefined";
+}
+%}
+
+%union {
+    char* str;
+}
+
+%token <str> ID
+%token INT FLOAT NUM FNUM
+
+%%
+program:
+      program stmt
+    | stmt
+    ;
+
+stmt:
+      INT ID '=' NUM ';'
+        {
+            strcpy(var[count], $2);
+            strcpy(type[count], "int");
+            count++;
+            printf("Valid Declaration\n");
+        }
+
+    | FLOAT ID '=' FNUM ';'
+        {
+            strcpy(var[count], $2);
+            strcpy(type[count], "float");
+            count++;
+            printf("Valid Declaration\n");
+        }
+
+    | ID '=' ID ';'
+        {
+            char *t1 = getType($1);
+            char *t2 = getType($3);
+
+            if(strcmp(t1, t2) == 0)
+                printf("Valid Assignment\n");
+            else
+                printf("Type Mismatch Error\n");
+        }
+    ;
+%%
+
+int main() {
+    printf("Enter Statements:\n");
+    yyparse();
+    return 0;
+}
+
+void yyerror(const char *s) {
+    printf("Syntax Error\n");
+}
+________________________________________
+⚙️ 5. Execution Steps
+yacc -d type.y
+lex type.l
+gcc y.tab.c lex.yy.c -ll
+./a.out
+________________________________________
+▶ 6. Sample Execution
+✅ Valid Input
+int a = 10;
+int b = 20;
+a = b;
+Output:
+Valid Declaration
+Valid Declaration
+Valid Assignment
+________________________________________
+❌ Invalid Input
+int a = 10;
+float b = 5.5;
+a = b;
+Output:
+Valid Declaration
+Valid Declaration
+Type Mismatch Error
+________________________________________
+🧠 How It Works
+•	Stores variables and types in arrays 
+•	During assignment: 
+o	Gets type of both variables 
+o	Compares them 
+o	Prints error if mismatch 
+________________________________________
+🎓 Viva Questions
+❓ What is type checking?
+Ensuring operations are performed on compatible data types.
+❓ What is semantic error?
+Error related to meaning (like type mismatch).
+❓ What is symbol table?
+Stores variable name and type.
+❓ Which phase performs type checking?
+Semantic Analysis phase.
+________________________________________
+✅ Conclusion
+In this experiment:
+•	Implemented basic type checking 
+•	Detected type mismatch errors 
+•	Used symbol table concept 
