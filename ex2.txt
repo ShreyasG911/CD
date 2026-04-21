@@ -1,0 +1,119 @@
+🔹 EXPERIMENT NO. 2
+Count number of lines, tabs, spaces, words, characters using LEX
+________________________________________
+🎯 1. Objective
+•	To understand LEX tool
+•	To create a lexical analyzer
+•	To count:
+•	Lines
+•	Words
+•	Spaces
+•	Tabs
+•	Characters
+________________________________________
+📘 2. Theory (Simple Explanation)
+🔹 What is LEX?
+LEX is a tool used to generate a Lexical Analyzer.
+It:
+•	Takes regular expressions as input
+•	Generates a C program (lex.yy.c)
+•	That program scans input and performs actions
+________________________________________
+🔹 Structure of LEX Program
+%{
+Declaration Section
+%}
+
+%%
+Rules Section
+%%
+
+Auxiliary Functions
+________________________________________
+💻 3. LEX Program (count.l)
+Save this as: count.l
+%{
+#include <stdio.h>
+
+int lines = 0;
+int words = 0;
+int spaces = 0;
+int tabs = 0;
+int characters = 0;
+%}
+
+%%
+\n          { lines++; characters++; }
+[ ]         { spaces++; characters++; }
+\t          { tabs++; characters++; }
+[a-zA-Z0-9]+ { words++; characters += yyleng; }
+.           { characters++; }
+%%
+
+int main()
+{
+    printf("Enter the text (Press Ctrl+D to stop):\n");
+    yylex();
+
+    printf("\n----- COUNT RESULT -----\n");
+    printf("Lines: %d\n", lines);
+    printf("Words: %d\n", words);
+    printf("Spaces: %d\n", spaces);
+    printf("Tabs: %d\n", tabs);
+    printf("Characters: %d\n", characters);
+
+    return 0;
+}
+
+int yywrap()
+{
+    return 1;
+}
+________________________________________
+⚙️ 4. How to Execute
+Step 1: Generate C file
+lex count.l
+This creates:
+lex.yy.c
+________________________________________
+Step 2: Compile
+gcc lex.yy.c -ll
+________________________________________
+Step 3: Run
+./a.out
+________________________________________
+▶ 5. Sample Input
+Hello World
+This is CD practical
+(Press Ctrl + D after typing)
+________________________________________
+✅ Output
+----- COUNT RESULT -----
+Lines: 2
+Words: 5
+Spaces: 4
+Tabs: 0
+Characters: 33
+________________________________________
+🧠 Explanation of Rules
+Pattern	Meaning
+\n	Count lines
+[ ]	Count spaces
+\t	Count tabs
+[a-zA-Z0-9]+	Count words
+.	Count other characters
+________________________________________
+🎓 Viva Questions
+❓ What is yylex()?
+Function that starts lexical analysis.
+❓ What is yywrap()?
+Function called at end of input.
+❓ What is yytext?
+Stores matched lexeme.
+❓ What is yyleng?
+Length of matched word.
+❓ Difference between Lex and Compiler?
+Lex generates lexical analyzer only.
+________________________________________
+✅ Conclusion
+In this experiment, we implemented a LEX program to count lines, words, spaces, tabs, and characters from a text file.
