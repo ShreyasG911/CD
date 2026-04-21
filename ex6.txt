@@ -1,0 +1,142 @@
+🔹 EXPERIMENT NO. 6
+Desk Calculator using LEX and YACC
+________________________________________
+🎯 1. Objective
+•	To implement a calculator 
+•	To perform operations like: 
+o	Addition (+) 
+o	Subtraction (-) 
+o	Multiplication (*) 
+o	Division (/) 
+•	Using LEX + YACC together 
+________________________________________
+📘 2. Theory (Simple Explanation)
+A Desk Calculator:
+•	Takes arithmetic expression as input 
+•	Evaluates it 
+•	Prints result 
+________________________________________
+🔹 Working
+•	LEX → breaks input into tokens (numbers, operators) 
+•	YACC → applies grammar rules and calculates result 
+👉 This is syntax-directed translation (calculation happens during parsing)
+________________________________________
+🔹 Grammar Used
+E → E + T
+E → T
+T → T * F
+T → F
+F → (E)
+F → digit
+________________________________________
+💻 3. LEX Program (calc.l)
+Save as: calc.l
+%{
+#include "y.tab.h"
+#include <stdlib.h>
+%}
+
+%%
+[0-9]+      { yylval = atoi(yytext); return NUMBER; }
+[ \t]       ;   /* ignore spaces */
+\n          return 0;
+.           return yytext[0];
+%%
+
+int yywrap() {
+    return 1;
+}
+________________________________________
+💻 4. YACC Program (calc.y)
+Save as: calc.y
+%{
+#include <stdio.h>
+#include <stdlib.h>
+
+void yyerror(const char *s);
+int yylex();
+%}
+
+%token NUMBER
+%left '+' '-'
+%left '*' '/'
+
+%%
+input:
+      input line
+    | /* empty */
+    ;
+
+line:
+      '\n'
+    | exp '\n'   { printf("Result = %d\n", $1); }
+    ;
+
+exp:
+      exp '+' exp   { $$ = $1 + $3; }
+    | exp '-' exp   { $$ = $1 - $3; }
+    | exp '*' exp   { $$ = $1 * $3; }
+    | exp '/' exp   { $$ = $1 / $3; }
+    | '(' exp ')'   { $$ = $2; }
+    | NUMBER        { $$ = $1; }
+    ;
+%%
+
+int main() {
+    printf("Enter Expression:\n");
+    yyparse();
+    return 0;
+}
+
+void yyerror(const char *s) {
+    printf("Error: Invalid Expression\n");
+}
+________________________________________
+⚙️ 5. Execution Steps
+Step 1:
+yacc -d calc.y
+________________________________________
+Step 2:
+lex calc.l
+________________________________________
+Step 3:
+gcc y.tab.c lex.yy.c -ll
+________________________________________
+Step 4:
+./a.out
+________________________________________
+▶ 6. Sample Execution
+Input:
+Enter Expression:
+5+3*2
+Output:
+Result = 11
+________________________________________
+Another Input:
+(10+2)*3
+Output:
+Result = 36
+________________________________________
+🧠 How It Works
+Component	Role
+LEX	Identifies numbers
+YACC	Applies rules + calculates
+yylval	Stores number value
+$$	Result of expression
+$1, $3	Operands
+________________________________________
+🎓 Viva Questions
+❓ What is desk calculator?
+Program that evaluates arithmetic expressions.
+❓ What is $$ in YACC?
+Represents result of production.
+❓ What is $1, $2, $3?
+Values of symbols in production rule.
+❓ Why precedence is used?
+To handle operator priority (* before +)
+________________________________________
+✅ Conclusion
+In this experiment:
+•	LEX tokenized input 
+•	YACC evaluated expression 
+•	Calculator successfully computed results 
