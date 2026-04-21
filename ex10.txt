@@ -1,0 +1,117 @@
+🔹 EXPERIMENT NO. 10
+Code Generation (Simple Target Code Generation)
+________________________________________
+🎯 1. Objective
+•	To generate target code 
+•	To convert intermediate code (TAC) into assembly-like code 
+•	To understand final phase of compiler 
+________________________________________
+📘 2. Theory (Simple Explanation)
+🔹 What is Code Generation?
+•	Final phase of compiler 
+•	Converts intermediate code → machine/assembly code 
+________________________________________
+🔹 Input (Three Address Code)
+t1 = a + b
+t2 = t1 * c
+________________________________________
+🔹 Output (Target Code)
+MOV a, R0
+ADD b, R0
+MOV R0, t1
+
+MOV t1, R0
+MUL c, R0
+MOV R0, t2
+________________________________________
+🔹 Registers Used
+•	R0 → temporary register 
+________________________________________
+💻 3. C Program – Simple Code Generator
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+char postfix[50];
+int top = -1;
+char stack[50];
+
+// Push operation
+void push(char c) {
+    stack[++top] = c;
+}
+
+// Pop operation
+char pop() {
+    return stack[top--];
+}
+
+int main() {
+    int i = 0;
+    char ch;
+
+    printf("Enter postfix expression: ");
+    scanf("%s", postfix);
+
+    printf("\nGenerated Target Code:\n");
+
+    while ((ch = postfix[i++]) != '\0') {
+        if (isalnum(ch)) {
+            push(ch);
+        } else {
+            char op2 = pop();
+            char op1 = pop();
+
+            printf("MOV %c, R1\n", op1);
+
+            switch (ch) {
+                case '+': printf("ADD %c, R1\n", op2); break;
+                case '-': printf("SUB %c, R1\n", op2); break;
+                case '*': printf("MUL %c, R1\n", op2); break;
+                case '/': printf("DIV %c, R1\n", op2); break;
+            }
+
+            push('R'); // store result in R
+        }
+    }
+
+    return 0;
+}
+________________________________________
+▶ 4. Sample Execution
+Input:
+ab+
+Output:
+MOV a, R0
+ADD b, R0
+________________________________________
+Another Input:
+x=a*b
+Output:
+MOV a, R0
+MUL b, R0
+MOV R0, x
+________________________________________
+🧠 Explanation
+Instruction	Meaning
+MOV	Move data
+ADD	Addition
+SUB	Subtraction
+MUL	Multiplication
+DIV	Division
+________________________________________
+🎓 Viva Questions
+❓ What is code generation?
+Conversion of intermediate code to machine code.
+❓ What is target code?
+Final output code executed by machine.
+❓ What is register?
+Temporary storage in CPU.
+❓ Why use registers?
+Faster than memory.
+________________________________________
+✅ Conclusion
+In this experiment:
+•	Converted expressions into assembly-like code 
+•	Understood final phase of compiler 
+•	Used register-based instructions 
