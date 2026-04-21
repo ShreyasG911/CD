@@ -1,0 +1,139 @@
+🔹 EXPERIMENT NO. 4
+Construct a Recursive Descent Parser for Arithmetic Expressions
+________________________________________
+🎯 1. Objective
+•	To understand Recursive Descent Parsing
+•	To implement LL(1) grammar
+•	To check whether an arithmetic expression is valid or invalid
+________________________________________
+📘 2. Theory (Simple Explanation)
+🔹 What is Recursive Descent Parser?
+It is a top-down parser.
+•	Uses recursive functions
+•	One function for each non-terminal
+•	Starts from start symbol
+•	Checks input according to grammar rules
+________________________________________
+🔹 Grammar Used (LL(1))
+E  → T E'
+E' → + T E' | - T E' | ε
+T  → F T'
+T' → * F T' | / F T' | ε
+F  → (E) | id
+Where:
+•	E = Expression
+•	T = Term
+•	F = Factor
+•	id = identifier (like a, b, x)
+________________________________________
+💻 3. C Program – Recursive Descent Parser
+Save as: rdp.c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+char input[100];
+int i = 0;
+int error = 0;
+
+void E();
+void Eprime();
+void T();
+void Tprime();
+void F();
+
+// E → T E'
+void E() {
+    T();
+    Eprime();
+}
+
+// E' → + T E' | - T E' | ε
+void Eprime() {
+    if(input[i] == '+' || input[i] == '-') {
+        i++;
+        T();
+        Eprime();
+    }
+}
+
+// T → F T'
+void T() {
+    F();
+    Tprime();
+}
+
+// T' → * F T' | / F T' | ε
+void Tprime() {
+    if(input[i] == '*' || input[i] == '/') {
+        i++;
+        F();
+        Tprime();
+    }
+}
+
+// F → (E) | id
+void F() {
+    if(input[i] == '(') {
+        i++;
+        E();
+        if(input[i] == ')')
+            i++;
+        else
+            error = 1;
+    }
+    else if(isalnum(input[i])) {
+        i++;
+    }
+    else {
+        error = 1;
+    }
+}
+
+int main() {
+    printf("Enter Arithmetic Expression: ");
+    scanf("%s", input);
+
+    E();
+
+    if(input[i] == '\0' && error == 0)
+        printf("Valid Expression\n");
+    else
+        printf("Invalid Expression\n");
+
+    return 0;
+}
+________________________________________
+▶ 4. Sample Execution
+✅ Valid Input
+Enter Arithmetic Expression: a+b*c
+Output:
+Valid Expression
+________________________________________
+❌ Invalid Input
+Enter Arithmetic Expression: a+*b
+Output:
+Invalid Expression
+________________________________________
+🧠 How It Works
+Function	Meaning
+E()	Expression
+T()	Term
+F()	Factor
+i	Pointer to current input character
+error	Checks syntax error
+Parser checks expression according to grammar rules step-by-step.
+________________________________________
+🎓 Viva Questions
+❓ What is Recursive Descent Parser?
+A top-down parser using recursive functions.
+❓ Why remove left recursion?
+Because recursive descent parser cannot handle left recursion.
+❓ What is LL(1)?
+Left-to-right scan, Leftmost derivation, 1 lookahead symbol.
+❓ Difference between Top-down and Bottom-up?
+Top-down → Starts from start symbol
+Bottom-up → Starts from input string
+________________________________________
+✅ Conclusion
+In this experiment, we implemented a recursive descent parser that checks whether an arithmetic expression is syntactically correct.
