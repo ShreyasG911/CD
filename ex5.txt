@@ -1,0 +1,136 @@
+🔹 EXPERIMENT NO. 5
+Syntax Checking of Given Program using LEX and YACC
+________________________________________
+🎯 1. Objective
+•	To understand Syntax Analysis (2nd phase of compiler)
+•	To use LEX + YACC together
+•	To check whether a program is syntactically correct
+________________________________________
+📘 2. Theory (Simple Explanation)
+🔹 What is YACC?
+YACC = Yet Another Compiler Compiler
+•	It generates a parser
+•	Works with grammar rules
+•	Uses tokens from LEX
+________________________________________
+🔹 Difference Between LEX and YACC
+LEX	YACC
+Performs Lexical Analysis	Performs Syntax Analysis
+Recognizes tokens	Recognizes grammar
+Generates lex.yy.c	Generates y.tab.c
+________________________________________
+💻 Example: Simple Expression Syntax Checker
+We will build a simple syntax checker for arithmetic expressions.
+________________________________________
+🔹 Step 1: LEX File (lex.l)
+Save as: lex.l
+%{
+#include "y.tab.h"
+#include <stdlib.h>
+%}
+
+%%
+[0-9]+      { yylval = atoi(yytext); return NUMBER; }
+[ \t]       ;   /* Ignore spaces */
+\n          return 0;
+.           return yytext[0];
+%%
+
+int yywrap() {
+    return 1;
+}
+________________________________________
+🔹 Step 2: YACC File (yacc.y)
+Save as: yacc.y
+%{
+#include <stdio.h>
+#include <stdlib.h>
+
+void yyerror(const char *s);
+int yylex();
+%}
+
+%token NUMBER
+%left '+' '-'
+%left '*' '/'
+
+%%
+expression:
+      expression '+' expression
+    | expression '-' expression
+    | expression '*' expression
+    | expression '/' expression
+    | '(' expression ')'
+    | NUMBER
+    ;
+%%
+
+int main() {
+    printf("Enter Arithmetic Expression:\n");
+    yyparse();
+    printf("Valid Expression\n");
+    return 0;
+}
+
+void yyerror(const char *s) {
+    printf("Invalid Expression\n");
+    exit(0);
+}
+________________________________________
+⚙️ 3. How to Execute
+Step 1: Run YACC
+yacc -d yacc.y
+This creates:
+•	y.tab.c
+•	y.tab.h
+________________________________________
+Step 2: Run LEX
+lex lex.l
+This creates:
+•	lex.yy.c
+________________________________________
+Step 3: Compile
+gcc y.tab.c lex.yy.c -ll
+________________________________________
+Step 4: Run
+./a.out
+________________________________________
+▶ 4. Sample Execution
+✅ Valid Input
+Enter Arithmetic Expression:
+5+3*2
+Output:
+Valid Expression
+________________________________________
+❌ Invalid Input
+Enter Arithmetic Expression:
+5+*3
+Output:
+Invalid Expression
+________________________________________
+🧠 Important YACC Concepts
+Keyword	Meaning
+%token	Declares tokens
+%left	Left associativity
+%right	Right associativity
+%nonassoc	Non-associative
+yyparse()	Calls parser
+yyerror()	Handles syntax error
+________________________________________
+🎓 Viva Questions
+❓ What is yyparse()?
+It starts syntax analysis.
+❓ What is yylval?
+Used to pass token value from LEX to YACC.
+❓ Why use -d option in yacc?
+To generate y.tab.h header file.
+❓ What type of parser does YACC generate?
+LALR parser.
+❓ What is syntax analysis?
+Second phase of compiler that checks grammar rules.
+________________________________________
+✅ Conclusion
+In this experiment:
+•	LEX generated tokens.
+•	YACC verified grammar.
+•	Program successfully checked syntax of arithmetic expressions.
