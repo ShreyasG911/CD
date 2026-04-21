@@ -1,0 +1,116 @@
+🔹 EXPERIMENT NO. 9
+Code Optimization (Basic Block Optimization)
+________________________________________
+🎯 1. Objective
+•	To perform code optimization 
+•	To eliminate redundant expressions 
+•	To improve efficiency of intermediate code 
+________________________________________
+📘 2. Theory (Simple Explanation)
+🔹 What is Code Optimization?
+It is the process of:
+•	Improving code efficiency 
+•	Reducing execution time 
+•	Minimizing redundant computations 
+________________________________________
+🔹 What is a Basic Block?
+A Basic Block is:
+•	A sequence of instructions 
+•	With single entry and single exit 
+•	No branching inside 
+________________________________________
+🔹 Example (Unoptimized Code)
+t1 = a + b
+t2 = a + b
+t3 = t1 * c
+👉 Here, a + b is calculated twice ❌
+________________________________________
+✅ Optimized Code
+t1 = a + b
+t3 = t1 * c
+👉 Removed redundant computation ✔️
+________________________________________
+🔹 Types of Optimization
+•	Common Subexpression Elimination ✅ 
+•	Dead Code Elimination 
+•	Constant Folding 
+•	Strength Reduction 
+________________________________________
+💻 3. C Program – Simple Optimization
+This program removes duplicate expressions.
+#include <stdio.h>
+#include <string.h>
+
+struct expr {
+    char op1, op2, op;
+} e[10];
+
+int main() {
+    int n, i, j;
+    
+    printf("Enter number of expressions: ");
+    scanf("%d", &n);
+
+    for(i = 0; i < n; i++) {
+        printf("Enter expression %d (format: a + b): ", i+1);
+        scanf(" %c %c %c", &e[i].op1, &e[i].op, &e[i].op2);
+    }
+
+    printf("\nOptimized Expressions:\n");
+
+    for(i = 0; i < n; i++) {
+        int flag = 0;
+
+        for(j = 0; j < i; j++) {
+            if(e[i].op1 == e[j].op1 &&
+               e[i].op2 == e[j].op2 &&
+               e[i].op == e[j].op) {
+                flag = 1;
+                break;
+            }
+        }
+
+        if(flag == 0) {
+            printf("t%d = %c %c %c\n", i+1, e[i].op1, e[i].op, e[i].op2);
+        }
+    }
+
+    return 0;
+}
+________________________________________
+▶ 4. Sample Execution
+Input:
+Enter number of expressions: 3
+
+a + b
+a + b
+t1 * c
+________________________________________
+Output:
+Optimized Expressions:
+t1 = a + b
+t3 = t1 * c
+________________________________________
+🧠 Explanation
+Step	Action
+1	Store expressions
+2	Compare with previous
+3	If duplicate → skip
+4	Print unique expressions
+________________________________________
+🎓 Viva Questions
+❓ What is optimization?
+Improving code efficiency without changing output.
+❓ What is common subexpression?
+Same expression repeated multiple times.
+❓ What is dead code?
+Code that never executes.
+❓ Why optimize code?
+•	Faster execution 
+•	Less memory usage 
+________________________________________
+✅ Conclusion
+In this experiment:
+•	Identified redundant expressions 
+•	Eliminated duplicate computations 
+•	Improved efficiency of code 
