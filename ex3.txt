@@ -1,0 +1,144 @@
+🔹 EXPERIMENT NO. 3
+Lexical Analyzer for Given Language using LEX
+________________________________________
+🎯 1. Objective
+•	To implement a Lexical Analyzer
+•	To generate tokens like:
+•	Keywords
+•	Identifiers
+•	Numbers
+•	Operators
+•	Symbols
+•	To ignore:
+•	Spaces
+•	Tabs
+•	New lines
+•	Comments
+________________________________________
+📘 2. Theory (Simple Explanation)
+A Lexical Analyzer (Scanner):
+•	Reads source program
+•	Breaks it into tokens
+•	Removes unnecessary spaces and comments
+•	Sends tokens to parser
+________________________________________
+Example Input Program
+int main() {
+   int a = 10;
+   float b = 20.5;
+   // This is comment
+   a = a + b;
+}
+________________________________________
+Expected Output (Tokens)
+Keyword : int
+Identifier : main
+Symbol : (
+Symbol : )
+Symbol : {
+Keyword : int
+Identifier : a
+Operator : =
+Number : 10
+Symbol : ;
+...
+________________________________________
+💻 3. LEX Program (lexer.l)
+Save as: lexer.l
+%{
+#include <stdio.h>
+%}
+
+%%
+"int"|"float"|"char"|"if"|"else"|"while"|"return" 
+        { printf("Keyword: %s\n", yytext); }
+
+[a-zA-Z_][a-zA-Z0-9_]* 
+        { printf("Identifier: %s\n", yytext); }
+
+[0-9]+(\.[0-9]+)? 
+        { printf("Number: %s\n", yytext); }
+
+"//".*      { }    /* Ignore single line comment */
+
+[ \t\n]+    { }    /* Ignore spaces, tabs, newlines */
+
+"=="|"="|"+"|"-"|"*"|"/" 
+        { printf("Operator: %s\n", yytext); }
+
+"(" | ")" | "{" | "}" | ";" | "," 
+        { printf("Symbol: %s\n", yytext); }
+
+.   { printf("Invalid Token: %s\n", yytext); }
+%%
+
+int main()
+{
+    printf("Enter Source Code (Ctrl+D to stop):\n");
+    yylex();
+    return 0;
+}
+
+int yywrap()
+{
+    return 1;
+}
+________________________________________
+⚙️ 4. Execution Steps
+Step 1:
+lex lexer.l
+Step 2:
+gcc lex.yy.c -ll
+Step 3:
+./a.out
+________________________________________
+▶ 5. Sample Input
+int a = 10;
+float b = 20.5;
+a = a + b;
+________________________________________
+✅ Sample Output
+Keyword: int
+Identifier: a
+Operator: =
+Number: 10
+Symbol: ;
+
+Keyword: float
+Identifier: b
+Operator: =
+Number: 20.5
+Symbol: ;
+
+Identifier: a
+Operator: =
+Identifier: a
+Operator: +
+Identifier: b
+Symbol: ;
+________________________________________
+🧠 Rule Explanation
+Pattern	Meaning
+"int"	Keyword
+[a-zA-Z_][a-zA-Z0-9_]*	Identifier
+[0-9]+(\.[0-9]+)?	Integer/Float
+"//".*	Ignore comment
+[ \t\n]+	Ignore whitespace
+Operators	Recognize operators
+Symbols	Recognize special symbols
+________________________________________
+🎓 Viva Questions
+❓ What is lexical analysis?
+First phase of compiler that converts program into tokens.
+❓ What are tokens?
+Keywords, identifiers, numbers, operators etc.
+❓ What are lexemes?
+Actual text matched (stored in yytext).
+❓ Why remove spaces/comments?
+They are not required for syntax analysis.
+________________________________________
+✅ Conclusion
+In this experiment, we implemented a lexical analyzer using LEX that:
+•	Identifies tokens
+•	Ignores comments
+•	Ignores spaces and tabs
